@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Welcome to MyDictionaryApp</title>
+    </head>
+    <body>
+        <p th:text="${resultMessage}"></p>
+        <h2>Type a word that you want to look up</h2>
+        <form method="post" th:action="@{/word}">
+            <input type="text" name="word" th:value="${word}" required>
+            <input type="submit" value="search" />
+        </form>
+
+        <a th:text="${searchedWord}"></a> <a th:text="${meaning}"></a>
+        <p th:text="${phoneticSymbol}"></p>
+        <th:block th:if="${pronunciation != null}">
+            <figure>
+                <audio controls th:src="${pronunciation}"></audio>
+            </figure>
+        </th:block>
+        
+        <div th:each="data : ${example}">
+            <a th:text="${data.exampleSentence}"></a> | <a th:text="${data.jpTranslation}"></a>
+            <p></p>
+        </div>
+        
+    </body>
+</html>
