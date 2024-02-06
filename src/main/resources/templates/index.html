@@ -7,7 +7,7 @@
     <body>
         <p th:text="${resultMessage}"></p>
         <h2>Type a word that you want to look up</h2>
-        <form method="post" th:action="@{/word}">
+        <form method="get" th:action="@{/word}">
             <input type="text" name="word" th:value="${word}" required>
             <input type="submit" value="search" />
         </form>
@@ -19,6 +19,10 @@
                 <audio controls th:src="${pronunciation}"></audio>
             </figure>
         </th:block>
+        <div th:each="wordsApiResult : ${wordsApiResultList}">
+            <a th:text="${wordsApiResult.definition}"></a>
+            <p></p>
+        </div>
         
         <div th:each="data : ${example}">
             <a th:text="${data.exampleSentence}"></a> | <a th:text="${data.jpTranslation}"></a>

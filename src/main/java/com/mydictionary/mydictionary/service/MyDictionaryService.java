@@ -1,8 +1,8 @@
 package com.mydictionary.mydictionary.service;
 
-import org.springframework.ui.Model;
+import com.mydictionary.mydictionary.dto.WordInfo;
 
 public interface MyDictionaryService {
 
-    public void execute(Model model, String word);
+    public WordInfo execute(String word);
 }

@@ -1,7 +1,8 @@
 package com.mydictionary.mydictionary.scrape;
 
-import com.mydictionary.mydictionary.dto.WordInfo;
+import java.util.Optional;
 
-public interface WebScraper {
-    public WordInfo doWebScraping(final String word);
+public interface WebScraper<T> {
+    
+    public Optional<T> doWebScraping(final String word);
 }

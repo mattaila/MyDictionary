@@ -11,15 +11,16 @@ import org.jsoup.select.Elements;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.mydictionary.mydictionary.constant.Constants;
 import com.mydictionary.mydictionary.dto.Example;
 import com.mydictionary.mydictionary.dto.WordInfo;
 
 @Service
 @Scope("request")
-public class WeblioWebScraper implements WebScraper {
+public class WeblioWebScraper implements WebScraper<WordInfo> {
 
     @Override
-    public WordInfo doWebScraping(String word) {
+    public Optional<WordInfo> doWebScraping(final String word) {
 
         WordInfo wordInfo = null;
         try {
@@ -27,23 +28,23 @@ public class WeblioWebScraper implements WebScraper {
             wordInfo = getMeaningInfo(word);
             
             if(wordInfo.isError()) {
-                return wordInfo;
+                return Optional.empty();
             }
 
             //get example sentences
             wordInfo.setExampleInfo(getExampleSenteces(word));
-            return wordInfo;
+            return Optional.of(wordInfo);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return wordInfo;
+            return Optional.empty();
         }
     }
 
     private WordInfo getMeaningInfo(final String word) throws Exception {
         WordInfo wordInfo = new WordInfo(word);
 
-        Document doc = Jsoup.connect("https://ejje.weblio.jp/content/" + word).get();
+        Document doc = Jsoup.connect(Constants.BASE_URL_WEBLIO + word).get();
         Optional<Element> meaning = Optional.ofNullable(doc.selectFirst(".content-explanation"));
         
         if(meaning.isPresent()) {
@@ -66,7 +67,7 @@ public class WeblioWebScraper implements WebScraper {
     private List<Example> getExampleSenteces(final String word) throws Exception {
         List<Example> list = new ArrayList<>();
 
-        Document doc = Jsoup.connect("https://ejje.weblio.jp/sentence/content/" + word).get();
+        Document doc = Jsoup.connect(Constants.BASE_URL_WEBLIO_EXAMPLE + word).get();
         Elements elements = doc.select(".qotC");
         elements.forEach(e -> {
             //get example sentence
