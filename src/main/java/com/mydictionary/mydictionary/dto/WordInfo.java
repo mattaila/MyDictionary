@@ -14,8 +14,6 @@ public class WordInfo {
     private List<Example> exampleInfo;
     private String pronunciation;
     private String phoneticSymbol;
-    private String resultMessage;
-    private boolean error = false;
     private List<WordsApiResult> wordsApiResult;
 
     public WordInfo(final String word) {

@@ -5,8 +5,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.mydictionary.mydictionary.constant.Constants;
@@ -27,7 +29,12 @@ public class WordsApiExecutor {
         headers.set(Constants.X_RAPID_API_HOST, PropertyUtil.getProperty(Constants.X_RAPID_API_HOST));
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        ResponseEntity<WordsApiEntity> response = restTemplate.exchange(Constants.BASE_URL_WORDS_API + word, HttpMethod.GET, request, WordsApiEntity.class);
-        return response;
+        try {
+            return restTemplate.exchange(Constants.BASE_URL_WORDS_API + word, HttpMethod.GET, request, WordsApiEntity.class);
+        } catch(final HttpClientErrorException ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<WordsApiEntity>(new WordsApiEntity(), HttpStatus.NOT_FOUND);
+        }
+        
     }
 }

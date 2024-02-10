@@ -31,7 +31,6 @@ public class MyDictionaryController {
         model.addAttribute("phoneticSymbol", wordInfo.getPhoneticSymbol());
         model.addAttribute("pronunciation", wordInfo.getPronunciation());
         model.addAttribute("example", wordInfo.getExampleInfo());
-        model.addAttribute("resultMessage", wordInfo.getResultMessage());
         model.addAttribute("wordsApiResultList", wordInfo.getWordsApiResult());
         
         return "index";

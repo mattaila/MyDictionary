@@ -2,32 +2,76 @@
 <html  xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
-        <title>Welcome to MyDictionaryApp</title>
+        <title>MyDictionaryApp</title>
+        <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
     </head>
     <body>
-        <p th:text="${resultMessage}"></p>
-        <h2>Type a word that you want to look up</h2>
-        <form method="get" th:action="@{/word}">
-            <input type="text" name="word" th:value="${word}" required>
-            <input type="submit" value="search" />
-        </form>
+        <div class="container">
+            <h2>Type a word you want to look up</h2>
+            <form method="get" th:action="@{/word}">
+                <input type="text" name="word" th:value="${word}" required>
+                <input type="submit" value="look up" />
+            </form>
+        </div>
 
-        <a th:text="${searchedWord}"></a> <a th:text="${meaning}"></a>
-        <p th:text="${phoneticSymbol}"></p>
+        <th:block th:if="${meaning != null}">
+            <h3>・JP Translation</h3>
+            <a class="left" th:text="${searchedWord}"></a> <a th:text="${meaning}"></a>
+        </th:block>
+
         <th:block th:if="${pronunciation != null}">
+            <h3>・Pronunciation</h3>
+            <a class="left" th:text="${phoneticSymbol}"></a>
             <figure>
                 <audio controls th:src="${pronunciation}"></audio>
             </figure>
         </th:block>
-        <div th:each="wordsApiResult : ${wordsApiResultList}">
-            <a th:text="${wordsApiResult.definition}"></a>
-            <p></p>
-        </div>
-        
-        <div th:each="data : ${example}">
-            <a th:text="${data.exampleSentence}"></a> | <a th:text="${data.jpTranslation}"></a>
-            <p></p>
-        </div>
+
+
+            <th:block th:if="${not #lists.isEmpty(wordsApiResultList)}">
+                <h3>・English Definitions</h3>
+                <table>
+                    <thead>
+                        <tr>
+                          <th scope="col">definition</th>
+                          <th scope="col">synonym</th>
+                          <th scope="col">antonym</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="wordsApiResult : ${wordsApiResultList}">
+                            <td th:text="${wordsApiResult.definition}"></td>
+                            <td>
+                                <div th:if="${#lists.isEmpty(wordsApiResult.similarTo)}">
+                                    <a class="center">-</a>
+                                </div>
+                                <div th:each="synonym : ${wordsApiResult.similarTo}">
+                                    <a th:text="${synonym}"></a><br>
+                                </div>
+                            </td>
+                            <td>
+                                <div th:if="${#lists.isEmpty(wordsApiResult.antonyms)}">
+                                    <a class="center">-</a>
+                                </div>
+                                <div th:each="antonym : ${wordsApiResult.antonyms}">
+                                    <a th:text="${antonym}"></a><br>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </th:block>
+
+
+            <th:block th:if="${not #lists.isEmpty(example)}">
+                <details>
+                    <summary>Example Sentences</summary>
+                    <div class="bottom_space" th:each="data : ${example}">
+                        <a class="bold left" th:text="${data.exampleSentence}"></a><br>
+                        <a class="left" th:text="${data.jpTranslation}"></a>
+                    </div>
+                </details>
+            </th:block>
         
     </body>
 </html>

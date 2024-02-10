@@ -1,5 +1,6 @@
 package com.mydictionary.mydictionary.scrape;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,10 +28,6 @@ public class WeblioWebScraper implements WebScraper<WordInfo> {
             //get meaning
             wordInfo = getMeaningInfo(word);
             
-            if(wordInfo.isError()) {
-                return Optional.empty();
-            }
-
             //get example sentences
             wordInfo.setExampleInfo(getExampleSenteces(word));
             return Optional.of(wordInfo);
@@ -41,13 +38,13 @@ public class WeblioWebScraper implements WebScraper<WordInfo> {
         }
     }
 
-    private WordInfo getMeaningInfo(final String word) throws Exception {
+    private WordInfo getMeaningInfo(final String word) throws IOException {
         WordInfo wordInfo = new WordInfo(word);
 
         Document doc = Jsoup.connect(Constants.BASE_URL_WEBLIO + word).get();
         Optional<Element> meaning = Optional.ofNullable(doc.selectFirst(".content-explanation"));
         
-        if(meaning.isPresent()) {
+        meaning.ifPresent(e -> {
             wordInfo.setMeaningInfo(meaning.get().text());
 
             Element phoneticSymbol = doc.selectFirst("#phoneticEjjeNavi");
@@ -56,20 +53,17 @@ public class WeblioWebScraper implements WebScraper<WordInfo> {
             Element audioSource = doc.selectFirst(".contentAudio > source");
             String pronunciation = audioSource.attr("src");
             wordInfo.setPronunciation(pronunciation);
-        } else {
-            wordInfo.setResultMessage(String.format("not found \"%s\"", word));
-            wordInfo.setError(true);
-        }
+        });
 
         return wordInfo;
     }
 
-    private List<Example> getExampleSenteces(final String word) throws Exception {
+    private List<Example> getExampleSenteces(final String word) throws IOException {
         List<Example> list = new ArrayList<>();
 
         Document doc = Jsoup.connect(Constants.BASE_URL_WEBLIO_EXAMPLE + word).get();
-        Elements elements = doc.select(".qotC");
-        elements.forEach(e -> {
+        Optional<Elements> elements = Optional.ofNullable(doc.select(".qotC"));
+        elements.orElse(new Elements()).forEach(e -> {
             //get example sentence
             Element sentenceElement = e.selectFirst(".qotCE");
             String sentence = sentenceElement.text().replace("例文帳に追加", "");
