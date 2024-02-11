@@ -9,8 +9,8 @@
         <div class="container">
             <h2>Type a word you want to look up</h2>
             <form method="get" th:action="@{/word}">
-                <input type="text" name="word" th:value="${word}" required>
-                <input type="submit" value="look up" />
+                <input id="word" type="text" name="word" th:value="${word}" required>
+                <input id="submit" type="submit" value="look up" />
             </form>
         </div>
 
