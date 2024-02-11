@@ -12,5 +12,4 @@ public class Constants {
 
     public static final String X_RAPID_API_HOST = "X-RapidAPI-Host";
 
-    public static final String PROPERTY_FILE = "src/main/resources/application.properties";
 }
